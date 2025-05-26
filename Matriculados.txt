@@ -1,0 +1,15 @@
+-- Crear la base de datos
+CREATE DATABASE IF NOT EXISTS Matriculados;
+USE Matriculados;
+
+-- Crear la tabla AlumnoWeb
+CREATE TABLE AlumnoWeb (
+    codiEstdWeb INT AUTO_INCREMENT PRIMARY KEY,
+    ndniEstdWeb VARCHAR(50),
+    appaEstdWeb VARCHAR(50),
+    apmaEstdWeb VARCHAR(50),
+    nombEstdWeb VARCHAR(50),
+    fechNaciEstdWeb DATE,
+    logiEstd VARCHAR(100),
+    passEstd VARCHAR(500)
+);
