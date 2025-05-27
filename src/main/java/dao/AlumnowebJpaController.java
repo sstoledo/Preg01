@@ -159,12 +159,12 @@ public class AlumnowebJpaController implements Serializable {
         try {
             em = getEntityManager();
             // Buscar usuario por DNI
-            Query query = em.createNamedQuery("Alumnoweb.findByNdniEstdWeb");
+            Query query = em.createNamedQuery("AlumnoWeb.findByNdniEstdWeb");
             query.setParameter("ndniEstdWeb", dni);
             List<AlumnoWeb> usuarios = query.getResultList();
 
             if (usuarios.isEmpty()) {
-                return 0; // Usuario no encontrado
+                return 10; // Usuario no encontrado
             }
 
             AlumnoWeb usuario = usuarios.get(0);
@@ -206,10 +206,11 @@ public class AlumnowebJpaController implements Serializable {
         }
     }
 
-    // usar el metodo crearusuario en un main
+    // usar el metodo main para validar que funciona
     public static void main(String[] args) {
         AlumnowebJpaController dao = new AlumnowebJpaController();
-        dao.crearUsuario("Lord", "lord");
+        int validacion = dao.validarUsuario("Lord", "lord");
+        System.out.println(validacion);
     }
 
     // metodo para traer un usuario por dni

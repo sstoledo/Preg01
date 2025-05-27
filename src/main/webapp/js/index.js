@@ -1,25 +1,24 @@
 $(document).ready(function () {
   $("#btnLogin").click(function (e) {
     e.preventDefault();
-    const login = $("#exampleInputEmail").val().trim();
+    const loginValue = $("#exampleInputEmail").val().trim();
     const password = $("#exampleInputPassword").val().trim();
 
-    // Basic client-side validation
-    if (!login || !password) {
+    if (!loginValue || !password) {
       alert("Por favor, complete ambos campos");
       return;
     }
 
     const parametros = {
-      login: login,
+      login: loginValue,
       password: password,
     };
 
-    login(parametros);
+    loginRequest(parametros);
   });
 });
 
-function login(params) {
+function loginRequest(params) {
   fetch("login", {
     method: "POST",
     headers: {
@@ -35,10 +34,8 @@ function login(params) {
     })
     .then((data) => {
       if (data.success) {
-        // Login successful - redirect
         window.location.href = "principal.html";
       } else if (data.error) {
-        // Show error message from server
         alert(data.error);
       } else {
         throw new Error("Respuesta inesperada del servidor");
