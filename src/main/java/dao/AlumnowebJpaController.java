@@ -5,8 +5,9 @@
 package dao;
 
 import dao.exceptions.NonexistentEntityException;
-import dto.Alumnoweb;
+import dto.AlumnoWeb;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -38,7 +39,7 @@ public class AlumnowebJpaController implements Serializable {
 
     }
 
-    public void create(Alumnoweb alumnoweb) {
+    public void create(AlumnoWeb alumnoweb) {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -52,7 +53,7 @@ public class AlumnowebJpaController implements Serializable {
         }
     }
 
-    public void edit(Alumnoweb alumnoweb) throws NonexistentEntityException, Exception {
+    public void edit(AlumnoWeb alumnoweb) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -80,9 +81,9 @@ public class AlumnowebJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Alumnoweb alumnoweb;
+            AlumnoWeb alumnoweb;
             try {
-                alumnoweb = em.getReference(Alumnoweb.class, id);
+                alumnoweb = em.getReference(AlumnoWeb.class, id);
                 alumnoweb.getCodiEstdWeb();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The alumnoweb with id " + id + " no longer exists.", enfe);
@@ -96,19 +97,19 @@ public class AlumnowebJpaController implements Serializable {
         }
     }
 
-    public List<Alumnoweb> findAlumnowebEntities() {
+    public List<AlumnoWeb> findAlumnowebEntities() {
         return findAlumnowebEntities(true, -1, -1);
     }
 
-    public List<Alumnoweb> findAlumnowebEntities(int maxResults, int firstResult) {
+    public List<AlumnoWeb> findAlumnowebEntities(int maxResults, int firstResult) {
         return findAlumnowebEntities(false, maxResults, firstResult);
     }
 
-    private List<Alumnoweb> findAlumnowebEntities(boolean all, int maxResults, int firstResult) {
+    private List<AlumnoWeb> findAlumnowebEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(Alumnoweb.class));
+            cq.select(cq.from(AlumnoWeb.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -120,10 +121,10 @@ public class AlumnowebJpaController implements Serializable {
         }
     }
 
-    public Alumnoweb findAlumnoweb(Integer id) {
+    public AlumnoWeb findAlumnoweb(Integer id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(Alumnoweb.class, id);
+            return em.find(AlumnoWeb.class, id);
         } finally {
             em.close();
         }
@@ -133,7 +134,7 @@ public class AlumnowebJpaController implements Serializable {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Alumnoweb> rt = cq.from(Alumnoweb.class);
+            Root<AlumnoWeb> rt = cq.from(AlumnoWeb.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
@@ -160,13 +161,13 @@ public class AlumnowebJpaController implements Serializable {
             // Buscar usuario por DNI
             Query query = em.createNamedQuery("Alumnoweb.findByNdniEstdWeb");
             query.setParameter("ndniEstdWeb", dni);
-            List<Alumnoweb> usuarios = query.getResultList();
+            List<AlumnoWeb> usuarios = query.getResultList();
 
             if (usuarios.isEmpty()) {
                 return 0; // Usuario no encontrado
             }
 
-            Alumnoweb usuario = usuarios.get(0);
+            AlumnoWeb usuario = usuarios.get(0);
             String hashedPassword = usuario.getPassEstd();
 
             // Verificar la contraseña usando BCrypt
@@ -177,6 +178,57 @@ public class AlumnowebJpaController implements Serializable {
             }
         } catch (Exception e) {
             return 0;
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+    }
+
+    // Metodo para crear un usuario con password hashado
+    public void crearUsuario(String dni, String password) {
+        try {
+            AlumnowebJpaController dao = new AlumnowebJpaController();
+            AlumnoWeb usuario = new AlumnoWeb();
+            usuario.setCodiEstdWeb(1);
+            usuario.setNdniEstdWeb(dni);
+            usuario.setPassEstd(dao.hashPassword(password));
+            // Aquí puedes establecer otros campos del usuario si es necesario
+            usuario.setFechNaciEstdWeb(new Date());
+            usuario.setAppaEstdWeb("Apellido Paterno");
+            usuario.setApmaEstdWeb("Apellido Materno");
+            usuario.setNombEstdWeb("Nombre");
+            usuario.setLogiEstd("Login");
+            dao.create(usuario);
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+    }
+
+    // usar el metodo crearusuario en un main
+    public static void main(String[] args) {
+        AlumnowebJpaController dao = new AlumnowebJpaController();
+        dao.crearUsuario("Lord", "lord");
+    }
+
+    // metodo para traer un usuario por dni
+    public AlumnoWeb findAlumnoweb(String dni) {
+        EntityManager em = null;
+        try {
+            em = getEntityManager();
+            Query query = em.createNamedQuery("Alumnoweb.findByNdniEstdWeb");
+            query.setParameter("ndniEstdWeb", dni);
+            List<AlumnoWeb> usuarios = query.getResultList();
+
+            if (usuarios.isEmpty()) {
+                return null;
+            }
+            return usuarios.get(0);
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            return null;
         } finally {
             if (em != null) {
                 em.close();
