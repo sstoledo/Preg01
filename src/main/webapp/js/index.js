@@ -20,16 +20,14 @@ function login(params) {
             if (response.redirected) {
                 window.location.href = response.url;
             } else if (response.ok) {
-                return response.text();
+                return response.json();
             } else {
                 throw new Error('Login failed');
             }
         })
         .then(data => {
-            // Puedes manejar la respuesta aquí si no hay redirección
-            // Por ejemplo, mostrar un mensaje de error
             if (data) {
-                alert(data);
+                window.location.href = 'principal.html';
             }
         })
         .catch(error => {
