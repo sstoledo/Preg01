@@ -1,36 +1,51 @@
 $(document).ready(function () {
-    $("#btnLogin").click(function (e) {
-        e.preventDefault();
-        const email = $("#exampleInputEmail").val();
-        const password = $("#exampleInputPassword").val();
-        login({ email, password });
-    });
+  $("#btnLogin").click(function (e) {
+    e.preventDefault();
+    const login = $("#exampleInputEmail").val().trim();
+    const password = $("#exampleInputPassword").val().trim();
+
+    // Basic client-side validation
+    if (!login || !password) {
+      alert("Por favor, complete ambos campos");
+      return;
+    }
+
+    const parametros = {
+      login: login,
+      password: password,
+    };
+
+    login(parametros);
+  });
 });
 
-// función para obtener los valores de usuario y contraseña y enviarlos al servlet 'login' por POST usando fetch
 function login(params) {
-    fetch('login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `email=${encodeURIComponent(params.email)}&password=${encodeURIComponent(params.password)}`
+  fetch("login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(params),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Error en la red");
+      }
+      return response.json();
     })
-        .then(response => {
-            if (response.redirected) {
-                window.location.href = response.url;
-            } else if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Login failed');
-            }
-        })
-        .then(data => {
-            if (data) {
-                window.location.href = 'principal.html';
-            }
-        })
-        .catch(error => {
-            alert('Error: ' + error.message);
-        });
+    .then((data) => {
+      if (data.success) {
+        // Login successful - redirect
+        window.location.href = "principal.html";
+      } else if (data.error) {
+        // Show error message from server
+        alert(data.error);
+      } else {
+        throw new Error("Respuesta inesperada del servidor");
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert(error.message || "Ocurrió un error durante el login");
+    });
 }

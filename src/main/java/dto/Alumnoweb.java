@@ -25,15 +25,16 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "alumnoweb")
 @NamedQueries({
-    @NamedQuery(name = "Alumnoweb.findAll", query = "SELECT a FROM Alumnoweb a"),
-    @NamedQuery(name = "Alumnoweb.findByCodiEstdWeb", query = "SELECT a FROM Alumnoweb a WHERE a.codiEstdWeb = :codiEstdWeb"),
-    @NamedQuery(name = "Alumnoweb.findByNdniEstdWeb", query = "SELECT a FROM Alumnoweb a WHERE a.ndniEstdWeb = :ndniEstdWeb"),
-    @NamedQuery(name = "Alumnoweb.findByAppaEstdWeb", query = "SELECT a FROM Alumnoweb a WHERE a.appaEstdWeb = :appaEstdWeb"),
-    @NamedQuery(name = "Alumnoweb.findByApmaEstdWeb", query = "SELECT a FROM Alumnoweb a WHERE a.apmaEstdWeb = :apmaEstdWeb"),
-    @NamedQuery(name = "Alumnoweb.findByNombEstdWeb", query = "SELECT a FROM Alumnoweb a WHERE a.nombEstdWeb = :nombEstdWeb"),
-    @NamedQuery(name = "Alumnoweb.findByFechNaciEstdWeb", query = "SELECT a FROM Alumnoweb a WHERE a.fechNaciEstdWeb = :fechNaciEstdWeb"),
-    @NamedQuery(name = "Alumnoweb.findByLogiEstd", query = "SELECT a FROM Alumnoweb a WHERE a.logiEstd = :logiEstd"),
-    @NamedQuery(name = "Alumnoweb.findByPassEstd", query = "SELECT a FROM Alumnoweb a WHERE a.passEstd = :passEstd")})
+        @NamedQuery(name = "Alumnoweb.findAll", query = "SELECT a FROM Alumnoweb a"),
+        @NamedQuery(name = "Alumnoweb.findByCodiEstdWeb", query = "SELECT a FROM Alumnoweb a WHERE a.codiEstdWeb = :codiEstdWeb"),
+        @NamedQuery(name = "Alumnoweb.findByNdniEstdWeb", query = "SELECT a FROM Alumnoweb a WHERE a.ndniEstdWeb = :ndniEstdWeb"),
+        @NamedQuery(name = "Alumnoweb.findByAppaEstdWeb", query = "SELECT a FROM Alumnoweb a WHERE a.appaEstdWeb = :appaEstdWeb"),
+        @NamedQuery(name = "Alumnoweb.findByApmaEstdWeb", query = "SELECT a FROM Alumnoweb a WHERE a.apmaEstdWeb = :apmaEstdWeb"),
+        @NamedQuery(name = "Alumnoweb.findByNombEstdWeb", query = "SELECT a FROM Alumnoweb a WHERE a.nombEstdWeb = :nombEstdWeb"),
+        @NamedQuery(name = "Alumnoweb.findByFechNaciEstdWeb", query = "SELECT a FROM Alumnoweb a WHERE a.fechNaciEstdWeb = :fechNaciEstdWeb"),
+        @NamedQuery(name = "Alumnoweb.findByLogiEstd", query = "SELECT a FROM Alumnoweb a WHERE a.logiEstd = :logiEstd"),
+        @NamedQuery(name = "Alumnoweb.validar", query = "SELECT a FROM Alumnoweb a WHERE a.ndniEstdWeb = :ndniEstdWeb AND a.passEstd = :passEstd"),
+        @NamedQuery(name = "Alumnoweb.findByPassEstd", query = "SELECT a FROM Alumnoweb a WHERE a.passEstd = :passEstd") })
 public class Alumnoweb implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -143,7 +144,8 @@ public class Alumnoweb implements Serializable {
             return false;
         }
         Alumnoweb other = (Alumnoweb) object;
-        if ((this.codiEstdWeb == null && other.codiEstdWeb != null) || (this.codiEstdWeb != null && !this.codiEstdWeb.equals(other.codiEstdWeb))) {
+        if ((this.codiEstdWeb == null && other.codiEstdWeb != null)
+                || (this.codiEstdWeb != null && !this.codiEstdWeb.equals(other.codiEstdWeb))) {
             return false;
         }
         return true;
@@ -153,5 +155,5 @@ public class Alumnoweb implements Serializable {
     public String toString() {
         return "dto.Alumnoweb[ codiEstdWeb=" + codiEstdWeb + " ]";
     }
-    
+
 }

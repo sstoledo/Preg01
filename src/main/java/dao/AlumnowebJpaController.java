@@ -12,8 +12,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Persistence;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -24,10 +27,15 @@ public class AlumnowebJpaController implements Serializable {
     public AlumnowebJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
-    private EntityManagerFactory emf = null;
+
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("my_persistence_unit");
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
+    }
+
+    public AlumnowebJpaController() {
+
     }
 
     public void create(Alumnoweb alumnoweb) {
@@ -133,5 +141,47 @@ public class AlumnowebJpaController implements Serializable {
             em.close();
         }
     }
-    
+
+    public String hashPassword(String plainPassword) {
+        // Genera un salt y hashea la contraseña
+        // El número 12 es el factor de costo (rounds), puedes ajustarlo según necesites
+        return BCrypt.hashpw(plainPassword, BCrypt.gensalt(12));
+    }
+
+    // Método adicional para verificar contraseñas
+    public boolean verifyPassword(String plainPassword, String hashedPassword) {
+        return BCrypt.checkpw(plainPassword, hashedPassword);
+    }
+
+    public int validarUsuario(String dni, String plainPassword) {
+        EntityManager em = null;
+        try {
+            em = getEntityManager();
+            // Buscar usuario por DNI
+            Query query = em.createNamedQuery("Alumnoweb.findByNdniEstdWeb");
+            query.setParameter("ndniEstdWeb", dni);
+            List<Alumnoweb> usuarios = query.getResultList();
+
+            if (usuarios.isEmpty()) {
+                return 0; // Usuario no encontrado
+            }
+
+            Alumnoweb usuario = usuarios.get(0);
+            String hashedPassword = usuario.getPassEstd();
+
+            // Verificar la contraseña usando BCrypt
+            if (verifyPassword(plainPassword, hashedPassword)) {
+                return 1; // Usuario y contraseña válidos
+            } else {
+                return -1; // Contraseña incorrecta
+            }
+        } catch (Exception e) {
+            return 0;
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+    }
+
 }

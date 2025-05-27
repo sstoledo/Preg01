@@ -1,2 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/Preg01"/>
+<Context path="/Preg01">
+  <Resource auth="Container" driverClassName="com.mysql.cj.jdbc.Driver" maxActive="20" maxIdle="10" maxWait="-1" name="persis" password="root" type="javax.sql.DataSource" url="jdbc:mysql://172.17.0.3:3306/Matriculados?zeroDateTimeBehavior=CONVERT_TO_NULL" username="root"/>
+</Context>
